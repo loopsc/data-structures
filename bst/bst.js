@@ -73,6 +73,16 @@ export default class BST {
         return root;
     }
 
+    find(value, root = this.root) {
+        if (root === null) return
+        if (value === root.data) return root;
+        else if (value < root.data) {
+            return this.find(value, root.left);
+        } else if (value > root.data) {
+            return this.find(value, root.right);
+        }
+    }
+
     prettyPrint(node, prefix = "", isLeft = true) {
         if (node === null) {
             return;

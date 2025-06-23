@@ -9,6 +9,8 @@ console.log("----------------------------------------")
 
 
 bst.insert(2)
-bst.deleteItem(56)
+// bst.deleteItem(56)
 
 bst.prettyPrint(bst.root)
+
+console.log(bst.find(423))
