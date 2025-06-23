@@ -45,33 +45,32 @@ export default class BST {
             root.left = this.deleteItem(value, root.left);
         } else if (value > root.data) {
             root.right = this.deleteItem(value, root.right);
-        } else {
-            if (value === root.data) {
-                // Case 1: Removing leaf node
-                if (root.left === null && root.right === null) {
-                    console.log("Case 1");
-                    return null;
-                }
-                // Case 2: Removing parent with 1 child
-                else if ((root.left === null) !== (root.right === null)) {
-                    console.log("Case 2");
-                    if (root.left === null) {
-                        return root.right;
-                    } else if (root.right === null) {
-                        return root.left;
-                    }
-                }
-                // Case 3: Removing parent with 2 children
-                else if (root.left !== null && root.right !== null) {
-                    console.log("Case 3");
-                    // Replace root with left-most leaf of the right subtree.
-                    let temp = root.right;
-                    while (temp.left !== null) temp = temp.left;
-                    root.data = temp.data;
-                    root.right = this.deleteItem(temp.data, root.right);
+        } else if (value === root.data) {
+            // Case 1: Removing leaf node
+            if (root.left === null && root.right === null) {
+                console.log("Case 1");
+                return null;
+            }
+            // Case 2: Removing parent with 1 child
+            else if ((root.left === null) !== (root.right === null)) {
+                console.log("Case 2");
+                if (root.left === null) {
+                    return root.right;
+                } else if (root.right === null) {
+                    return root.left;
                 }
             }
+            // Case 3: Removing parent with 2 children
+            else if (root.left !== null && root.right !== null) {
+                console.log("Case 3");
+                // Replace root with left-most leaf of the right subtree.
+                let temp = root.right;
+                while (temp.left !== null) temp = temp.left;
+                root.data = temp.data;
+                root.right = this.deleteItem(temp.data, root.right);
+            }
         }
+        return root;
     }
 
     prettyPrint(node, prefix = "", isLeft = true) {
