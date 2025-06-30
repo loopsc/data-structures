@@ -73,14 +73,108 @@ export default class BST {
         return root;
     }
 
+    /**
+     *
+     * @param {Number} value Data of the node to find
+     * @param {Node} [root] Optional. Root node.
+     * @returns Node object containing the value passed as argument
+     */
     find(value, root = this.root) {
-        if (root === null) return
+        if (root === null) return;
         if (value === root.data) return root;
         else if (value < root.data) {
             return this.find(value, root.left);
         } else if (value > root.data) {
             return this.find(value, root.right);
         }
+    }
+
+    // TODO: Maybe do a recursive version
+    levelOrder(callback) {
+        if (typeof callback !== "function")
+            throw new Error("User must provide a function as an argument");
+        const queue = [];
+        queue.push(this.root);
+        while (queue.length !== 0) {
+            // Remove the first element from queue
+            let curr = queue.shift();
+
+            // Process the node
+            curr.data = callback(curr.data);
+
+            // Push its children if they exist
+            if (curr.left !== null) queue.push(curr.left);
+            if (curr.right !== null) queue.push(curr.right);
+        }
+    }
+
+    preOrder(callback, node = this.root) {
+        if (typeof callback !== "function")
+            throw new Error("User must provide a function as an argument");
+
+        if (node === null) return;
+
+        console.log(`${node.data}`);
+        node.data = callback(node.data);
+
+        this.preOrder(callback, node.left);
+        this.preOrder(callback, node.right);
+    }
+
+    inOrder(callback, node = this.root) {
+        if (typeof callback !== "function")
+            throw new Error("User must provide a function as an argument");
+
+        if (node === null) return;
+
+        this.inOrder(callback, node.left);
+        console.log(node.data);
+        node.data = callback(node.data);
+
+        this.inOrder(callback, node.right);
+    }
+
+    postOrder(callback, node = this.root) {
+        if (typeof callback !== "function")
+            throw new Error("User must provide a function as an argument");
+        if (node === null) return;
+
+        this.postOrder(callback, node.left);
+        this.postOrder(callback, node.right);
+        console.log(node.data);
+        node.data = callback(node.data);
+    }
+
+    #heightHelper(value, height, node = this.root) {
+        if (!node) return -1;
+
+        const leftHeight = this.#heightHelper(value, height, node.left);
+        const rightHeight = this.#heightHelper(value, height, node.right);
+
+        let nodeHeight = Math.max(leftHeight, rightHeight) + 1;
+
+        if (node.data === value) height.value = nodeHeight;
+
+        return nodeHeight;
+    }
+
+    height(value) {
+        let height = { value: null };
+
+        this.#heightHelper(value, height, this.root);
+        return height.value;
+    }
+
+    depth(value, node = this.root) {
+        if (!node) return -1
+
+        if (value < node.data) {
+            left = this.depth(value, node.left)
+        } else if (value > node.data) {
+            right = this.depth(value, node.right)
+        }
+
+        if
     }
 
     prettyPrint(node, prefix = "", isLeft = true) {
@@ -104,3 +198,32 @@ export default class BST {
         }
     }
 }
+
+// height(value, node = this.root) {
+//     if (node === null) return -1;
+
+//     let leftHeight = this.height(value, node.left);
+//     if (typeof leftHeight === "object") return leftHeight;
+
+//     let rightHeight = this.height(value, node.right);
+//     if (typeof rightHeight === "object") return rightHeight;
+
+//     let ans = Math.max(leftHeight, rightHeight) + 1;
+
+//     // If we have bubbled back up but the root is not our data value
+//     if (node === this.root && node.data !== value) {
+//         if (typeof leftHeight !== "object") return rightHeight.height;
+//         else if (typeof rightHeight !== "object") return leftHeight.height;
+//         // If we have bubbled back up and the root is our data value
+//     } else if (node === this.root && node.data === value) {
+//         return ans;
+//         // If the value does not exist
+//     } else {
+//         return null;
+//     }
+
+//     if (node.data === value) return { height: ans };
+//     else {
+//         return ans;
+//     }
+// }
