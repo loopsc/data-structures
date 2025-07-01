@@ -100,7 +100,7 @@ export default class BST {
             let curr = queue.shift();
 
             // Process the node
-            curr.data = callback(curr.data);
+            callback(curr.data);
 
             // Push its children if they exist
             if (curr.left !== null) queue.push(curr.left);
@@ -114,8 +114,7 @@ export default class BST {
 
         if (node === null) return;
 
-        console.log(`${node.data}`);
-        node.data = callback(node.data);
+        callback(node.data);
 
         this.preOrder(callback, node.left);
         this.preOrder(callback, node.right);
@@ -128,8 +127,7 @@ export default class BST {
         if (node === null) return;
 
         this.inOrder(callback, node.left);
-        console.log(node.data);
-        node.data = callback(node.data);
+        callback(node.data);
 
         this.inOrder(callback, node.right);
     }
@@ -141,15 +139,14 @@ export default class BST {
 
         this.postOrder(callback, node.left);
         this.postOrder(callback, node.right);
-        console.log(node.data);
-        node.data = callback(node.data);
+        callback(node.data);
     }
 
-    #heightHelper(value, height, node = this.root) {
+    #calcHeight(value, height, node = this.root) {
         if (!node) return -1;
 
-        const leftHeight = this.#heightHelper(value, height, node.left);
-        const rightHeight = this.#heightHelper(value, height, node.right);
+        const leftHeight = this.#calcHeight(value, height, node.left);
+        const rightHeight = this.#calcHeight(value, height, node.right);
 
         let nodeHeight = Math.max(leftHeight, rightHeight) + 1;
 
@@ -161,23 +158,69 @@ export default class BST {
     height(value) {
         let height = { value: null };
 
-        this.#heightHelper(value, height, this.root);
+        this.#calcHeight(value, height, this.root);
         return height.value;
     }
 
     depth(value, node = this.root) {
-        if (!node) return -1
+        if (!node) return null;
 
-        if (value < node.data) {
-            left = this.depth(value, node.left)
-        } else if (value > node.data) {
-            right = this.depth(value, node.right)
+        let counter = null;
+
+        if (node.data === value) {
+            return 0;
         }
 
-        if
+        counter = this.depth(value, node.left);
+        if (counter !== null) {
+            return counter + 1;
+        }
+
+        counter = this.depth(value, node.right);
+        if (counter !== null) {
+            return counter + 1;
+        }
+
+        return null;
     }
 
-    prettyPrint(node, prefix = "", isLeft = true) {
+    #calcBalance(node = this.root) {
+        if (node === null) return 0;
+
+        let leftHeight = this.#calcBalance(node.left);
+        let rightHeight = this.#calcBalance(node.right);
+
+        if (
+            leftHeight === -1 ||
+            rightHeight === -1 ||
+            Math.abs(leftHeight - rightHeight) > 1
+        ) {
+            return -1;
+        }
+
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    isBalanced() {
+        return this.#calcBalance() !== -1
+    }
+
+    #toArr(node = this.root, arr = []) {
+        if (node === null) return arr
+
+        this.#toArr(node.left, arr)
+        arr.push(node.data)
+        this.#toArr(node.right, arr)
+
+        return arr
+    }
+
+    rebalance() {
+        const newArr = this.#toArr()
+        this.root = this.buildTree(newArr, 0, newArr.length - 1)
+    }
+
+    prettyPrint(node = this.root, prefix = "", isLeft = true) {
         if (node === null) {
             return;
         }
